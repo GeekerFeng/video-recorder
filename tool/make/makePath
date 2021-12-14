@@ -1,0 +1,17 @@
+-include $(ROOT_PATH)/.config
+
+#application
+subdirs-$(CONFIG_MAIN_APP)+=application/app
+
+#lib
+subdirs-$(CONFIG_LIB_SSL)+=lib/libssl
+subdirs-$(CONFIG_LIB_TEST)+=lib/libtest
+
+#platform
+ifneq ($(CONFIG_PLATFORM),"")
+	subdirs-y += platform
+endif
+
+#thirdparty
+subdirs-$(CONFIG_THIRD_JSON)+=thirdparty/json
+subdirs-$(CONFIG_THIRD_RTSP)+=thirdparty/rtsp

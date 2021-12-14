@@ -1,0 +1,61 @@
+include $(TOOL_PATH)/make/makeConfig
+
+#外部可以再添加
+MODULE_C_FLAGS += $(C_FLAGS)
+
+#模块名字 
+MODULE_NAME = $(notdir $(CURDIR))
+
+#编译生成文件路径 
+#TODO:这里存在不同路径下模块名字重复可能会会引起覆盖的问题
+MODULE_BUILD_DIR = $(BUILD_PATH)/$(MODULE_NAME)/
+$(shell test -d $(MODULE_BUILD_DIR)|| mkdir -p $(MODULE_BUILD_DIR))
+
+#TODO:还需要包含头文件，库文件
+#包含静态库
+MODULE_LIB_STATIC = $(wildcard *.a)
+
+#包含c文件
+MODULE_C_SRC = $(wildcard *.c)
+ifneq ($(MODULE_SUB_DIR),)
+MODULE_C_SRC += $(foreach subdir, $(MODULE_SUB_DIR), $(wildcard $(subdir)/*.c))
+endif
+MODULE_C_SRC += $(MODULE_SUB_C_FILE)
+
+#包含cpp文件
+MODULE_CPP_SRC = $(wildcard *.cpp)
+ifneq ($(MODULE_SUB_DIR),)
+MODULE_CPP_SRC += $(foreach subdir, $(MODULE_SUB_DIR), $(wildcard $(subdir)/*.cpp))
+endif
+MODULE_CPP_SRC += $(MODULE_SUB_CPP_FILE)
+
+#构建生成文件路径
+MODULE_C_OBJS_TEMP = $(patsubst %.c, %.o, $(MODULE_C_SRC))
+MODULE_CPP_OBJS_TEMP = $(patsubst %.cpp, %.o, $(MODULE_CPP_SRC))
+
+MODULE_C_OBJS = $(addprefix $(MODULE_BUILD_DIR), $(MODULE_C_OBJS_TEMP))
+MODULE_CPP_OBJS = $(addprefix $(MODULE_BUILD_DIR), $(MODULE_CPP_OBJS_TEMP))
+
+MODULE_TARGET = lib$(MODULE_NAME).a
+
+MODULE_SUB_DIRt = 
+.PHONY: all
+
+all: $(MODULE_TARGET)
+
+$(MODULE_TARGET) : $(MODULE_C_OBJS) $(MODULE_CPP_OBJS) $(MODULE_LIB_STATIC)
+	$(Q)mkdir -p $(TARGET_PATH)
+	$(Q)$(AR) rcs -o $(TARGET_PATH)/$@ $(MODULE_C_OBJS) $(MODULE_CPP_OBJS)
+	$(Q)if [ -n "$(MODULE_LIB_STATIC)" ]; then \
+		echo -e "\033[35m COPY $(notdir $(MODULE_LIB_STATIC))\033[0m"; \
+		cp $(MODULE_LIB_STATIC) $(TARGET_PATH)/; \
+	fi;
+$(MODULE_C_OBJS) : $(MODULE_BUILD_DIR)%.o : %.c
+	$(Q)if [ ! -d $(dir $@) ]; then mkdir -p $(dir $@); fi
+	$(Q)echo -e "\033[35m CREATE $(notdir $@)\033[0m"	
+	$(Q)$(CC) $(MODULE_C_FLAGS) -o $@ -c  $<
+
+$(MODULE_CPP_OBJS) : %.o : %.cpp
+	$(Q)if [ ! -d $(dir $@) ]; then mkdir -p $(dir $@); fi
+	$(Q)echo -e "\033[35m CREATE $(notdir $@)\033[0m"	
+	$(Q)$(CC) $(MODULE_C_FLAGS) -o $@ -c  $<

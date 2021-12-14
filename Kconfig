@@ -1,0 +1,21 @@
+config APP_EXAMPLE
+	bool "example app"
+	default y
+	help
+	example for video recorder
+
+menu "lib"
+
+
+endmenu
+
+config PLATFORM
+	string "platform"
+	default "linux"
+	help
+	this is for platform
+
+menu "thirdpart"
+
+
+endmenu

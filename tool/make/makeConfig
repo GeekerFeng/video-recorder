@@ -1,0 +1,14 @@
+SHELL = /bin/bash
+MAKEFLAGS += -rR --no-print-directory
+
+export CXX      := $(TOOLCHAIN)g++
+export CC      := $(TOOLCHAIN)gcc
+export LD      := $(TOOLCHAIN)ld
+export NM      := $(TOOLCHAIN)nm
+export AR      := $(TOOLCHAIN)ar
+export RM      := rm
+export Q       := @
+export MAKE    := make
+export MKDIR   := mkdir
+export OBJCOPY := $(TOOLCHAIN)objcopy
+export STRIP   := $(TOOLCHAIN)strip 

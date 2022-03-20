@@ -26,6 +26,7 @@ TARGET ?= $(BUILD_PATH)/outbin
 all: $(TARGET)
 
 $(TARGET): subsrc
+	$(shell test -d $(BUILD_PATH)|| mkdir -p $(BUILD_PATH))
 	$(Q)echo -e "\033[33m CREATE $(notdir $@)\033[0m"
 	$(Q)$(CC) $(C_FLAGS) $(LD_FLAGS) $(LIB_STATIC) -o $@
 
@@ -45,6 +46,8 @@ $(BUILD_CONFIG_PATH)/kconfig/mconf:
 
 clean:
 	$(Q)rm -r $(BUILD_PATH)/*
+	$(Q)rm -r $(BUILD_PATH)
 
 dist-clean:
 	$(Q)rm -r $(BUILD_PATH)/* .config .config.old
+	$(Q)rm -r $(BUILD_PATH)

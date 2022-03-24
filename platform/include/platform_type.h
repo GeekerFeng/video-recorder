@@ -1,3 +1,4 @@
 #pragma once
 
-typeof
+#include <stdint.h>
+#include <stdbool.h>

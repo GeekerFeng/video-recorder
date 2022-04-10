@@ -1,10 +1,6 @@
 #include "media.h"
 
-Media::Media(string path = "/dev/video0", uint16_t rate = 30, uint32_t resolution = 1080*720): 
-			sDevPath(path), uRate(rate), uResolution(resolution){}
-{
-	
-}
+using namespace std;
 
 Media::~Media(void)
 {
@@ -43,23 +39,28 @@ void Media::setFrameRate(uint16_t rate)
 
 }
 
-void Media::setFrameResolution(uint32_t resolution)
-{
+void Media::setFrameResolution(uint16_t resWight, uint16_t resHeight);
+{ if(isOpen == TRUE)
+	{
+		cout << "please open first" << endl;	
+		return ;
+	}
 
+	uResWight = resWight;
+	uResHeight = resHeight;
 }
 
 void Media::showMediaInfo()
 {
-
+		cout << "path: " << sDevPath << endl;
+		cout << "rate: " << uRate << endl;
+		cout << "resWight: " << uResWight << endl;
+		cout << "resHight: " << uResHeight << endl;
 }
 
 int Media::open(void)
 {
 
-}
-
-int Media::close(void)
-{
 	struct v4l2_capability caps = {0};
 	struct v4l2_format fmt = {0};
 	struct v4l2_requestbuffers req = {0};
@@ -107,4 +108,12 @@ int Media::close(void)
 	{
 		return -1;
 	}
+
+	isOpen = TRUE;
+}
+
+int Media::close(void)
+{
+	close(iFd);
+	ifOpen = FALSE;
 }
